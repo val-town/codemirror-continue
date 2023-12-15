@@ -1,0 +1,56 @@
+{
+  "name": "codemirror-continue",
+  "version": "1.0.0",
+  "description": "CodeMirror plugin to support comment continuations",
+  "main": "./dist/commonjs/index.js",
+  "scripts": {
+    "prepare": "tshy",
+    "dev": "vite",
+    "tsc": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "vite build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/val-town/codemirror-continue.git"
+  },
+  "keywords": [
+    "codemirror",
+    "codemirror6"
+  ],
+  "author": "Val Town",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/val-town/codemirror-continue/issues"
+  },
+  "homepage": "https://github.com/val-town/codemirror-continue#readme",
+  "devDependencies": {
+    "@codemirror/lang-javascript": "^6.2.1",
+    "codemirror": "^6.0.1",
+    "tshy": "^1.8.1",
+    "vite": "^5.0.10",
+    "vitest": "^1.0.4"
+  },
+  "tshy": {
+    "exports": {
+      "./package.json": "./package.json",
+      ".": "./src/index.ts"
+    }
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    }
+  },
+  "types": "./dist/commonjs/index.d.ts",
+  "type": "module"
+}
