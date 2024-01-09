@@ -1,22 +1,24 @@
 import { EditorView, basicSetup } from "codemirror";
+import { Prec } from "@codemirror/state";
 import { javascript } from "@codemirror/lang-javascript";
-import { continueComments } from "../src/index.js";
+import { continueKeymap } from "../src/index.js";
+import { keymap } from "@codemirror/view";
 
 (async () => {
   let editor = new EditorView({
-    doc: `let hasAnError: string = 10;
-
+    doc: `/** Comment */
 function increment(num: number) {
+  /** indented
   return num + 1;
 }
-
-increment('not a number');`,
+/** Continue`,
     extensions: [
       basicSetup,
       javascript({
         typescript: true,
         jsx: true,
       }),
+      Prec.high(keymap.of(continueKeymap)),
     ],
     parent: document.querySelector("#editor")!,
   });
