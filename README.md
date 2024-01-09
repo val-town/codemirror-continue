@@ -35,3 +35,31 @@ And you hit `/`, it'll _delete_ the previous space, giving you
 ```
 
 Spectacular! Get it?
+
+## Usage
+
+Import `continueKeymap`:
+
+```ts
+import { continueKeymap } from "@val-town/codemirror-continue";
+```
+
+Import `keymap` and `Prec`:
+
+```ts
+import { Prec } from "@codemirror/state";
+import { keymap } from "@codemirror/view";
+```
+
+Add the keybinding to your CodeMirror instance's `extensions` array:
+
+```ts
+extensions: [
+  basicSetup,
+  // … other setup
+  Prec.high(keymap.of(continueKeymap)),
+],
+```
+
+And that's it! This will only do anything if your CodeMirror
+is using the JavaScript or TypeScript mode.

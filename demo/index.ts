@@ -1,7 +1,7 @@
 import { EditorView, basicSetup } from "codemirror";
-import { Prec } from "@codemirror/state";
 import { javascript } from "@codemirror/lang-javascript";
 import { continueKeymap } from "../src/index.js";
+import { Prec } from "@codemirror/state";
 import { keymap } from "@codemirror/view";
 
 (async () => {
