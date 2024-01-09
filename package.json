@@ -1,5 +1,5 @@
 {
-  "name": "codemirror-continue",
+  "name": "@val-town/codemirror-continue",
   "version": "1.0.0",
   "description": "CodeMirror plugin to support comment continuations",
   "main": "./dist/commonjs/index.js",
@@ -52,5 +52,10 @@
     }
   },
   "types": "./dist/commonjs/index.d.ts",
-  "type": "module"
+  "type": "module",
+  "peerDependencies": {
+    "@codemirror/language": "^6",
+    "@codemirror/state": "^6",
+    "@codemirror/view": "^6"
+  }
 }
