@@ -1,5 +1,5 @@
 {
-  "name": "@val-town/codemirror-continue",
+  "name": "@valtown/codemirror-continue",
   "version": "1.0.0",
   "description": "CodeMirror plugin to support comment continuations",
   "main": "./dist/commonjs/index.js",

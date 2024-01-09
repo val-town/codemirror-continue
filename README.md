@@ -1,4 +1,4 @@
-# @val-town/codemirror-continue
+# @valtown/codemirror-continue
 
 This **continues block comments when you
 hit Enter** in [CodeMirror](https://codemirror.net/).
@@ -41,7 +41,7 @@ Spectacular! Get it?
 Import `continueKeymap`:
 
 ```ts
-import { continueKeymap } from "@val-town/codemirror-continue";
+import { continueKeymap } from "@valtown/codemirror-continue";
 ```
 
 Import `keymap` and `Prec`:
