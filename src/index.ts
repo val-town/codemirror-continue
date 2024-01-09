@@ -109,7 +109,7 @@ export const maybeCloseBlockComment: StateCommand = ({ state, dispatch }) => {
       let insert = "/";
       return {
         range: EditorSelection.cursor(pos),
-        changes: { from: line.to - 1, insert: insert },
+        changes: { from: line.to - 1, to: line.to, insert: insert },
       };
     }
 
