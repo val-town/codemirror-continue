@@ -12,6 +12,9 @@
       "suspicious": {
         "noAssignInExpressions": "off"
       },
+      "style": {
+        "useTemplate": "info"
+      },
       "recommended": true
     }
   }
