@@ -8,6 +8,7 @@
     "dev": "vite",
     "tsc": "tsc --noEmit",
     "test": "vitest run",
+    "lint": "biome lint",
     "test:watch": "vitest",
     "build": "vite build"
   },
@@ -32,6 +33,7 @@
     "@codemirror/lang-javascript": "^6.2.1",
     "codemirror": "^6.0.1",
     "tshy": "^1.8.1",
+    "@biomejs/biome": "^1.8.1",
     "vite": "^5.0.10",
     "vitest": "^1.0.4"
   },
