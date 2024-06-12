@@ -1,5 +1,5 @@
-import { StateCommand, EditorSelection } from "@codemirror/state";
-import { KeyBinding } from "@codemirror/view";
+import { type StateCommand, EditorSelection } from "@codemirror/state";
+import type { KeyBinding } from "@codemirror/view";
 import { syntaxTree } from "@codemirror/language";
 import { javascriptLanguage } from "@codemirror/lang-javascript";
 
@@ -14,17 +14,17 @@ export const insertNewlineContinueComment: StateCommand = ({
   state,
   dispatch,
 }) => {
-  let tree = syntaxTree(state),
-    { doc } = state;
+  const tree = syntaxTree(state);
+  const { doc } = state;
   let dont = null;
-  let changes = state.changeByRange((range) => {
+  const changes = state.changeByRange((range) => {
     // Don't do anything if we're not in JavaScript mode.
     // This should also cover TypeScript, which is just
     // JavaScript with extra configuration.
     if (!range.empty || !javascriptLanguage.isActiveAt(state, range.from))
       return (dont = { range });
-    let pos = range.from;
-    let line = doc.lineAt(pos);
+    const pos = range.from;
+    const line = doc.lineAt(pos);
 
     const restOfLine = line.text.slice(pos - line.from).trim();
 
@@ -44,7 +44,7 @@ export const insertNewlineContinueComment: StateCommand = ({
         return (dont = { range });
       }
 
-      let indentation = line.text.match(/^([^\*\/]+)([\*|\/])/);
+      const indentation = line.text.match(/^([^\*\/]+)([\*|\/])/);
       let indentStr = indentation?.[1] || " ";
 
       // If continuing from /**,
@@ -53,7 +53,7 @@ export const insertNewlineContinueComment: StateCommand = ({
       if (indentation?.[2] === "/") {
         indentStr = indentStr + " ";
       }
-      let insert = state.lineBreak + `${indentStr}* `;
+      const insert = state.lineBreak + `${indentStr}* `;
 
       return {
         range: EditorSelection.cursor(pos + insert.length),
@@ -74,17 +74,17 @@ export const insertNewlineContinueComment: StateCommand = ({
  * for convenience.
  */
 export const maybeCloseBlockComment: StateCommand = ({ state, dispatch }) => {
-  let tree = syntaxTree(state),
-    { doc } = state;
+  const tree = syntaxTree(state);
+  const { doc } = state;
   let dont = null;
-  let changes = state.changeByRange((range) => {
+  const changes = state.changeByRange((range) => {
     // Don't do anything if we're not in JavaScript mode.
     // This should also cover TypeScript, which is just
     // JavaScript with extra configuration.
     if (!range.empty || !javascriptLanguage.isActiveAt(state, range.from))
       return (dont = { range });
-    let pos = range.from;
-    let line = doc.lineAt(pos);
+    const pos = range.from;
+    const line = doc.lineAt(pos);
 
     const restOfLine = line.text.slice(pos - line.from).trim();
 
@@ -106,7 +106,7 @@ export const maybeCloseBlockComment: StateCommand = ({ state, dispatch }) => {
       if (!line.text.match(/^\s+\* $/)) {
         return (dont = { range });
       }
-      let insert = "/";
+      const insert = "/";
       return {
         range: EditorSelection.cursor(pos),
         changes: { from: line.to - 1, to: line.to, insert: insert },
