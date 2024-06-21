@@ -30,12 +30,12 @@
   },
   "homepage": "https://github.com/val-town/codemirror-continue#readme",
   "devDependencies": {
-    "@codemirror/lang-javascript": "^6.2.1",
+    "@codemirror/lang-javascript": "^6.2.2",
     "codemirror": "^6.0.1",
-    "tshy": "^1.8.1",
-    "@biomejs/biome": "^1.8.1",
-    "vite": "^5.0.10",
-    "vitest": "^1.0.4"
+    "tshy": "^1.15.1",
+    "@biomejs/biome": "^1.8.2",
+    "vite": "^5.3.1",
+    "vitest": "^1.6.0"
   },
   "tshy": {
     "exports": {
@@ -47,10 +47,12 @@
     "./package.json": "./package.json",
     ".": {
       "import": {
+        "source": "./src/index.ts",
         "types": "./dist/esm/index.d.ts",
         "default": "./dist/esm/index.js"
       },
       "require": {
+        "source": "./src/index.ts",
         "types": "./dist/commonjs/index.d.ts",
         "default": "./dist/commonjs/index.js"
       }
