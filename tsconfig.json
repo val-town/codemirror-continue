@@ -14,6 +14,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
+    "strictNullChecks": true,
     "target": "es2022",
     "rootDir": "./src",
     "outDir": "./dist"

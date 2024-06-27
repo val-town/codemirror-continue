@@ -1,7 +1,11 @@
-import { type StateCommand, EditorSelection } from "@codemirror/state";
-import type { KeyBinding } from "@codemirror/view";
-import { syntaxTree } from "@codemirror/language";
 import { javascriptLanguage } from "@codemirror/lang-javascript";
+import { syntaxTree } from "@codemirror/language";
+import {
+  EditorSelection,
+  type SelectionRange,
+  type StateCommand,
+} from "@codemirror/state";
+import type { KeyBinding } from "@codemirror/view";
 
 /**
  * This is modeled after the CodeMirror Markdown mode's
@@ -16,7 +20,7 @@ export const insertNewlineContinueComment: StateCommand = ({
 }) => {
   const tree = syntaxTree(state);
   const { doc } = state;
-  let dont = null;
+  let dont: null | { range: SelectionRange } = null;
   const changes = state.changeByRange((range) => {
     // Don't do anything if we're not in JavaScript mode.
     // This should also cover TypeScript, which is just
@@ -51,9 +55,9 @@ export const insertNewlineContinueComment: StateCommand = ({
       // we want an extra space of indentation
       // to match the second *
       if (indentation?.[2] === "/") {
-        indentStr = indentStr + " ";
+        indentStr = `${indentStr} `;
       }
-      const insert = state.lineBreak + `${indentStr}* `;
+      const insert = `${state.lineBreak}${indentStr}* `;
 
       return {
         range: EditorSelection.cursor(pos + insert.length),
@@ -76,7 +80,7 @@ export const insertNewlineContinueComment: StateCommand = ({
 export const maybeCloseBlockComment: StateCommand = ({ state, dispatch }) => {
   const tree = syntaxTree(state);
   const { doc } = state;
-  let dont = null;
+  let dont: null | { range: SelectionRange } = null;
   const changes = state.changeByRange((range) => {
     // Don't do anything if we're not in JavaScript mode.
     // This should also cover TypeScript, which is just
