@@ -4,7 +4,7 @@
   "description": "CodeMirror plugin to support comment continuations",
   "main": "./dist/commonjs/index.js",
   "scripts": {
-    "prepare": "tshy",
+    "prepare": "tsc",
     "dev": "vite",
     "tsc": "tsc --noEmit",
     "test": "vitest run",
@@ -32,33 +32,21 @@
   "devDependencies": {
     "@codemirror/lang-javascript": "^6.2.2",
     "codemirror": "^6.0.1",
-    "tshy": "^1.15.1",
     "@biomejs/biome": "^1.8.2",
     "vite": "^5.3.1",
     "vitest": "^1.6.0"
-  },
-  "tshy": {
-    "exports": {
-      "./package.json": "./package.json",
-      ".": "./src/index.ts"
-    }
   },
   "exports": {
     "./package.json": "./package.json",
     ".": {
       "import": {
         "source": "./src/index.ts",
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
-      },
-      "require": {
-        "source": "./src/index.ts",
-        "types": "./dist/commonjs/index.d.ts",
-        "default": "./dist/commonjs/index.js"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
       }
     }
   },
-  "types": "./dist/commonjs/index.d.ts",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "peerDependencies": {
     "@codemirror/language": "^6",
