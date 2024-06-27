@@ -16,7 +16,8 @@
     "url": "git+https://github.com/val-town/codemirror-continue.git"
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "keywords": [
     "codemirror",
@@ -39,8 +40,8 @@
     "./package.json": "./package.json",
     ".": {
       "import": {
-        "source": "./src/index.ts",
         "types": "./dist/index.d.ts",
+        "source": "./src/index.ts",
         "default": "./dist/index.js"
       }
     }
