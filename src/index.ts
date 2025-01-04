@@ -2,10 +2,18 @@ import { javascriptLanguage } from "@codemirror/lang-javascript";
 import { syntaxTree } from "@codemirror/language";
 import {
   EditorSelection,
+  type EditorState,
   type SelectionRange,
   type StateCommand,
 } from "@codemirror/state";
 import type { KeyBinding } from "@codemirror/view";
+
+const able = (state: EditorState, range: SelectionRange) => {
+  // Don't do anything if we're not in JavaScript mode.
+  // This should also cover TypeScript, which is just
+  // JavaScript with extra configuration.
+  return range.empty && javascriptLanguage.isActiveAt(state, range.from)
+}
 
 /**
  * This is modeled after the CodeMirror Markdown mode's
@@ -22,11 +30,9 @@ export const insertNewlineContinueComment: StateCommand = ({
   const { doc } = state;
   let dont: null | { range: SelectionRange } = null;
   const changes = state.changeByRange((range) => {
-    // Don't do anything if we're not in JavaScript mode.
-    // This should also cover TypeScript, which is just
-    // JavaScript with extra configuration.
-    if (!range.empty || !javascriptLanguage.isActiveAt(state, range.from))
+    if (!able(state, range))
       return (dont = { range });
+
     const pos = range.from;
     const line = doc.lineAt(pos);
 
@@ -82,10 +88,7 @@ export const maybeCloseBlockComment: StateCommand = ({ state, dispatch }) => {
   const { doc } = state;
   let dont: null | { range: SelectionRange } = null;
   const changes = state.changeByRange((range) => {
-    // Don't do anything if we're not in JavaScript mode.
-    // This should also cover TypeScript, which is just
-    // JavaScript with extra configuration.
-    if (!range.empty || !javascriptLanguage.isActiveAt(state, range.from))
+    if (!able(state, range))
       return (dont = { range });
     const pos = range.from;
     const line = doc.lineAt(pos);
