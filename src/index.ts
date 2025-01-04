@@ -8,11 +8,28 @@ import {
 } from "@codemirror/state";
 import type { KeyBinding } from "@codemirror/view";
 
+// commentTokens: {line: "//", block: {open: "/*", close: "*/"}},
+interface Block {
+  open: string | null,
+  close: string | null
+}
+interface CommentTokens {
+  line: string | null,
+  block: Block | null
+}
+
 const able = (state: EditorState, range: SelectionRange) => {
-  // Don't do anything if we're not in JavaScript mode.
-  // This should also cover TypeScript, which is just
-  // JavaScript with extra configuration.
-  return range.empty && javascriptLanguage.isActiveAt(state, range.from)
+  if (range.empty) {
+    const data = state.languageDataAt<CommentTokens>("commentTokens", range.from);
+    for (let i = 0; i < data.length; i++) {
+      const block = data[i]?.block;
+      if (block
+          && (block.open === "/*")
+          && (block.close === "*/"))
+        return true;
+    }
+  }
+  return false
 }
 
 /**
