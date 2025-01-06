@@ -62,4 +62,5 @@ extensions: [
 ```
 
 And that's it! This will only do anything if your CodeMirror
-is using the JavaScript or TypeScript mode.
+is using a language that supports `/* */` style block comments,
+like JavaScript and TypeScript.
