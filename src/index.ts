@@ -71,15 +71,15 @@ export const insertNewlineContinueComment: StateCommand = ({
         return (dont = { range });
       }
 
-      const indentation = line.text.match(/^([^\*\/]+)([\*|\/])/);
-      let indentStr = indentation?.[1] || " ";
-
-      // If continuing from /**,
-      // we want an extra space of indentation
-      // to match the second *
-      if (indentation?.[2] === "/") {
-        indentStr = `${indentStr} `;
+      const startLine = doc.lineAt(node.from)
+      let offset = node.from - startLine.from
+      if (offset < 0) {
+        // Something went wrong.
+        return (dont = { range });
       }
+      offset++ // Line up with the *.
+
+      let indentStr = " ".repeat(offset)
       const insert = `${state.lineBreak}${indentStr}* `;
 
       return {
