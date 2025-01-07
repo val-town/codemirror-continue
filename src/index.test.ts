@@ -8,7 +8,7 @@ import {
 } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 
-function insert(text, pos) {
+function insert(text: string, pos: number) {
   let tr: any;
 
   function dispatch(tr1: Transaction) {
