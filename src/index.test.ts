@@ -1,4 +1,4 @@
-import { insertNewlineContinueComment } from '../src/index.js';
+import { insertNewlineContinueComment, maybeCloseBlockComment } from '../src/index.js';
 import { javascript } from "@codemirror/lang-javascript";
 import { test, expect } from "vitest";
 import {
@@ -8,7 +8,7 @@ import {
 } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 
-function insert(text: string, pos: number) {
+function insert(text: string, pos: number, char?: string) {
   let tr: any;
 
   function dispatch(tr1: Transaction) {
@@ -29,7 +29,13 @@ function insert(text: string, pos: number) {
   }).state;
 
   tr = null;
-  insertNewlineContinueComment({ state, dispatch: dispatch });
+  char = char ?? " "
+  if (char === " ")
+    insertNewlineContinueComment({ state, dispatch: dispatch });
+  else if (char === "/")
+    maybeCloseBlockComment({ state, dispatch: dispatch });
+  else
+    throw new Error("char must be ' ' or '/'")
 
   let doc: Text
   if (tr)
@@ -53,7 +59,7 @@ test("/**", () => {
 })
 
 
-test("midway; ", () => {
+test("midway", () => {
   const doc = "/** abc";
   expect(insert(doc, doc.length - 2)).toEqual(doc);
 })
@@ -97,4 +103,31 @@ let a /* forgot to close this...
        * `;
 
   expect(insert(doc, doc.length)).toEqual(end);
+})
+
+test("ends on line", () => {
+  const doc = "/** abc */";
+  expect(insert(doc, doc.length - 3)).toEqual(doc);
+})
+
+
+test("previous comment ends on line", () => {
+  const doc = `
+/*export*/ function f() { /* description `;
+  const end = doc + `
+                           * `;
+  expect(insert(doc, doc.length)).toEqual(end);
+})
+
+test("ends on line (/)", () => {
+  const doc = "/** abc */";
+  expect(insert(doc, doc.length - 3, "/")).toEqual(doc);
+})
+
+test("previous comment ends on line (/)", () => {
+  const doc = "/*export*/ function f() { /* * ";
+  // Could do this.
+  //const end = "/*export*/ function f() { /* */";
+  const end = "/*export*/ function f() { /* * ";
+  expect(insert(doc, doc.length, "/")).toEqual(end);
 })
