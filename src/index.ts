@@ -21,6 +21,17 @@ interface CommentTokens {
   block: Block | null
 }
 
+const atCommentToken = (doc: Text, pos: number, node: SyntaxNode) => {
+  return (
+    // Either */<HERE> or *<HERE>/.
+    ((pos === node.to) || (pos === (node.to - 1)))
+    // And there's enough space in the comment for it to be ending.
+    && ((node.to - node.from) >= "/**/".length)
+    // And the comment actually ends.
+    && (doc.sliceString(node.to - 2, node.to) === "*/")
+  );
+}
+
 const able = (state: EditorState, range: SelectionRange) => {
   if (range.empty) {
     const data = state.languageDataAt<CommentTokens>("commentTokens", range.from);
@@ -32,18 +43,7 @@ const able = (state: EditorState, range: SelectionRange) => {
         return true;
     }
   }
-  return false
-}
-
-const endsOnLine = (doc: Text, node: SyntaxNode, line: Line) => {
-  return (
-    // The comment node ends on the line
-    (node.to <= line.to)
-    // There's enough space in the comment for it to be ending.
-    && ((node.to - node.from) >= "/**/".length)
-    // The comment actually ends.
-    && (doc.sliceString(node.to - 2, node.to) === "*/")
-  )
+  return false;
 }
 
 /**
@@ -67,37 +67,29 @@ export const insertNewlineContinueComment: StateCommand = ({
     const pos = range.from;
     const line = doc.lineAt(pos);
 
-    const restOfLine = line.text.slice(pos - line.from).trim();
-
-    // TODO: we could do something more sophisticated here.
-    // If we're not at the end of the line,
-    // do nothing.
-    if (restOfLine) {
-      return (dont = { range });
-    }
-
     const node = tree.resolveInner(pos, -1);
 
     if (node.name === "BlockComment") {
-      // If the comment ends on this line, do not continue.
-      if (endsOnLine(doc, node, line)) {
+      // If the cursor is at the */ token, do not continue.
+      if (atCommentToken(doc, pos, node)) {
         return (dont = { range });
       }
 
-      const startLine = doc.lineAt(node.from)
-      let offset = node.from - startLine.from
+      const startLine = doc.lineAt(node.from);
+      let offset = node.from - startLine.from;
       if (offset < 0) {
         // Something went wrong.
         return (dont = { range });
       }
-      offset++ // Line up with the *.
+      offset++; // Line up with the *.
 
-      let indentStr = " ".repeat(offset)
-      const insert = `${state.lineBreak}${indentStr}* `;
+      const restOfLine = line.text.slice(pos - line.from).trim();
+      let indentStr = " ".repeat(offset);
+      const insert = `${state.lineBreak}${indentStr}* ${restOfLine}`;
 
       return {
-        range: EditorSelection.cursor(pos + insert.length),
-        changes: { from: line.to, insert: insert },
+        range: EditorSelection.cursor(pos + insert.length - restOfLine.length),
+        changes: { from: pos, to: line.to, insert: insert },
       };
     }
 
