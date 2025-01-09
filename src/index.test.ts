@@ -150,8 +150,21 @@ let a /* forgot to close this...
 });
 
 test("ends on line", () => {
-  const doc = "/** abc */";
-  expect(insert(doc, doc.length - 3)).toEqual([ doc, doc.length - 3 ]);
+  const doc = `
+/** abc */`;
+  const end = `
+/** abc
+ * */`;
+  expect(insert(doc, doc.length - 3)).toEqual([ end, end.length - 2 ]);
+});
+
+test("ends on line with strip", () => {
+  const doc = `
+/** before after   */   `;
+  const end = `
+/** before
+ * after   */`; // note only end spaces gone
+  expect(insert(doc, 11)).toEqual([ end, 15 ]);
 });
 
 test("previous comment ends on line", () => {

@@ -35,17 +35,6 @@ const able = (state: EditorState, range: SelectionRange) => {
   return false
 }
 
-const endsOnLine = (doc: Text, node: SyntaxNode, line: Line) => {
-  return (
-    // The comment node ends on the line
-    (node.to <= line.to)
-    // There's enough space in the comment for it to be ending.
-    && ((node.to - node.from) >= "/**/".length)
-    // The comment actually ends.
-    && (doc.sliceString(node.to - 2, node.to) === "*/")
-  )
-}
-
 /**
  * This is modeled after the CodeMirror Markdown mode's
  * ability to continue lists and blockquotes. It's meant to be bound
@@ -70,11 +59,6 @@ export const insertNewlineContinueComment: StateCommand = ({
     const node = tree.resolveInner(pos, -1);
 
     if (node.name === "BlockComment") {
-      // If the comment ends on this line, do not continue.
-      if (endsOnLine(doc, node, line)) {
-        return (dont = { range });
-      }
-
       const startLine = doc.lineAt(node.from)
       let offset = node.from - startLine.from
       if (offset < 0) {
