@@ -67,15 +67,6 @@ export const insertNewlineContinueComment: StateCommand = ({
     const pos = range.from;
     const line = doc.lineAt(pos);
 
-    const restOfLine = line.text.slice(pos - line.from).trim();
-
-    // TODO: we could do something more sophisticated here.
-    // If we're not at the end of the line,
-    // do nothing.
-    if (restOfLine) {
-      return (dont = { range });
-    }
-
     const node = tree.resolveInner(pos, -1);
 
     if (node.name === "BlockComment") {
@@ -92,12 +83,13 @@ export const insertNewlineContinueComment: StateCommand = ({
       }
       offset++ // Line up with the *.
 
+      const restOfLine = line.text.slice(pos - line.from).trim();
       let indentStr = " ".repeat(offset)
-      const insert = `${state.lineBreak}${indentStr}* `;
+      const insert = `${state.lineBreak}${indentStr}* ${restOfLine}`;
 
       return {
-        range: EditorSelection.cursor(pos + insert.length),
-        changes: { from: line.to, insert: insert },
+        range: EditorSelection.cursor(pos + insert.length - restOfLine.length),
+        changes: { from: pos, to: line.to, insert: insert },
       };
     }
 

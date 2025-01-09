@@ -50,8 +50,12 @@ test("/**", () => {
 });
 
 test("midway", () => {
-  const doc = "/** abc";
-  expect(insert(doc, doc.length - 2)).toEqual([ doc, doc.length - 2 ]);
+  const doc = `
+/** abc`;
+  const end = `
+/** a
+ * bc`;
+  expect(insert(doc, doc.length - 2)).toEqual([ end, end.length - 2 ]);
 });
 
 test("after code", () => {
