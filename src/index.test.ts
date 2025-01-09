@@ -58,6 +58,35 @@ test("midway", () => {
   expect(insert(doc, doc.length - 2)).toEqual([ end, end.length - 2 ]);
 });
 
+test("midway with trim", () => {
+  const doc = `
+/** abc   `;
+  const end = `
+/** a
+ * bc`;
+  expect(insert(doc, doc.length - 5)).toEqual([ end, end.length - 2 ]);
+});
+
+test("midway on second line", () => {
+  const doc = `
+/* @brief Add one.
+ * This is a longish sentence that will be split in two.`;
+  const end = `
+/* @brief Add one.
+ * This is a longish sentence that will be split
+ * in two.`;
+  expect(insert(doc, doc.length - ' in two.'.length)).toEqual([ end, end.length - 'in two.'.length ]);
+});
+
+test("midway with text before", () => {
+  const doc = `
+let a = 1; /** abc`;
+  const end = `
+let a = 1; /** a
+            * bc`;
+  expect(insert(doc, doc.length - 2)).toEqual([ end, end.length - 2 ]);
+});
+
 test("after code", () => {
   const doc = `
 let a = 1; /** abc`;
@@ -80,6 +109,27 @@ function increment(num: number) {
 function increment(num: number) {
   /** indented
    * 
+  return num + 1;
+}
+/** Continue`;
+
+  expect(insert(doc, 64)).toEqual([ end, 70 ]);
+});
+
+test("indented midway", () => {
+  const doc = `
+/** Comment */
+function increment(num: number) {
+  /** indented with four words
+  return num + 1;
+}
+/** Continue`;
+
+  const end = `
+/** Comment */
+function increment(num: number) {
+  /** indented
+   * with four words
   return num + 1;
 }
 /** Continue`;
