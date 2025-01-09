@@ -167,6 +167,16 @@ test("ends on line with strip", () => {
   expect(insert(doc, 11)).toEqual([ end, 15 ]);
 });
 
+test("at end of comment", () => {
+  const doc = '/** abc */';
+  expect(insert(doc, doc.length)).toEqual([ doc, doc.length ]);
+});
+
+test("at end slash", () => {
+  const doc = '/** abc */';
+  expect(insert(doc, doc.length - 1)).toEqual([ doc, doc.length - 1 ]);
+});
+
 test("previous comment ends on line", () => {
   const doc = `
 /*export*/ function f() { /* description `;

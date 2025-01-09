@@ -21,6 +21,17 @@ interface CommentTokens {
   block: Block | null
 }
 
+const atCommentToken = (doc: Text, pos: number, node: SyntaxNode) => {
+  return (
+    // Either */<HERE> or *<HERE>/.
+    ((pos === node.to) || (pos === (node.to - 1)))
+    // And there's enough space in the comment for it to be ending.
+    && ((node.to - node.from) >= "/**/".length)
+    // And the comment actually ends.
+    && (doc.sliceString(node.to - 2, node.to) === "*/")
+  )
+}
+
 const able = (state: EditorState, range: SelectionRange) => {
   if (range.empty) {
     const data = state.languageDataAt<CommentTokens>("commentTokens", range.from);
@@ -59,6 +70,11 @@ export const insertNewlineContinueComment: StateCommand = ({
     const node = tree.resolveInner(pos, -1);
 
     if (node.name === "BlockComment") {
+      // If the cursor is at the */ token, do not continue.
+      if (atCommentToken(doc, pos, node)) {
+        return (dont = { range });
+      }
+
       const startLine = doc.lineAt(node.from)
       let offset = node.from - startLine.from
       if (offset < 0) {
