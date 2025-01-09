@@ -29,7 +29,7 @@ const atCommentToken = (doc: Text, pos: number, node: SyntaxNode) => {
     && ((node.to - node.from) >= "/**/".length)
     // And the comment actually ends.
     && (doc.sliceString(node.to - 2, node.to) === "*/")
-  )
+  );
 }
 
 const able = (state: EditorState, range: SelectionRange) => {
@@ -43,7 +43,7 @@ const able = (state: EditorState, range: SelectionRange) => {
         return true;
     }
   }
-  return false
+  return false;
 }
 
 /**
@@ -75,16 +75,16 @@ export const insertNewlineContinueComment: StateCommand = ({
         return (dont = { range });
       }
 
-      const startLine = doc.lineAt(node.from)
-      let offset = node.from - startLine.from
+      const startLine = doc.lineAt(node.from);
+      let offset = node.from - startLine.from;
       if (offset < 0) {
         // Something went wrong.
         return (dont = { range });
       }
-      offset++ // Line up with the *.
+      offset++; // Line up with the *.
 
       const restOfLine = line.text.slice(pos - line.from).trim();
-      let indentStr = " ".repeat(offset)
+      let indentStr = " ".repeat(offset);
       const insert = `${state.lineBreak}${indentStr}* ${restOfLine}`;
 
       return {
