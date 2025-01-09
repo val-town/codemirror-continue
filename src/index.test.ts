@@ -31,28 +31,27 @@ function insert(text: string, pos: number, char = " ") {
   else if (char === "/") maybeCloseBlockComment({ state, dispatch: dispatch });
   else throw new Error("char must be ' ' or '/'");
 
-  let doc: Text;
-  if (tr) doc = (tr as Transaction).state.doc;
-  else doc = state.doc;
+  if (tr)
+    state = (tr as Transaction).state
 
-  return doc?.toString();
+  return [ state.doc?.toString(), state.selection.main.head ];
 }
 
 test("/*", () => {
   const doc = "/* abc";
   const end = "/* abc\n * ";
-  expect(insert(doc, doc.length)).toEqual(end);
+  expect(insert(doc, doc.length)).toEqual([ end, end.length ]);
 });
 
 test("/**", () => {
   const doc = "/** abc";
   const end = "/** abc\n * ";
-  expect(insert(doc, doc.length)).toEqual(end);
+  expect(insert(doc, doc.length)).toEqual([ end, end.length ]);
 });
 
 test("midway", () => {
   const doc = "/** abc";
-  expect(insert(doc, doc.length - 2)).toEqual(doc);
+  expect(insert(doc, doc.length - 2)).toEqual([ doc, doc.length - 2 ]);
 });
 
 test("after code", () => {
@@ -60,7 +59,7 @@ test("after code", () => {
 let a = 1; /** abc`;
   const end = `${doc}
             * `;
-  expect(insert(doc, doc.length)).toEqual(end);
+  expect(insert(doc, doc.length)).toEqual([ end, end.length ]);
 });
 
 test("indented", () => {
@@ -81,7 +80,7 @@ function increment(num: number) {
 }
 /** Continue`;
 
-  expect(insert(doc, 64)).toEqual(end);
+  expect(insert(doc, 64)).toEqual([ end, 70 ]);
 });
 
 test("earlier close missing", () => {
@@ -93,12 +92,12 @@ let a /* forgot to close this...
   const end = `${doc}
        * `;
 
-  expect(insert(doc, doc.length)).toEqual(end);
+  expect(insert(doc, doc.length)).toEqual([ end, end.length ]);
 });
 
 test("ends on line", () => {
   const doc = "/** abc */";
-  expect(insert(doc, doc.length - 3)).toEqual(doc);
+  expect(insert(doc, doc.length - 3)).toEqual([ doc, doc.length - 3 ]);
 });
 
 test("previous comment ends on line", () => {
@@ -106,12 +105,12 @@ test("previous comment ends on line", () => {
 /*export*/ function f() { /* description `;
   const end = `${doc}
                            * `;
-  expect(insert(doc, doc.length)).toEqual(end);
+  expect(insert(doc, doc.length)).toEqual([ end, end.length ]);
 });
 
 test("ends on line (/)", () => {
   const doc = "/** abc */";
-  expect(insert(doc, doc.length - 3, "/")).toEqual(doc);
+  expect(insert(doc, doc.length - 3, "/")).toEqual([ doc, doc.length - 3 ]);
 });
 
 test("previous comment ends on line (/)", () => {
@@ -119,5 +118,5 @@ test("previous comment ends on line (/)", () => {
   // Could do this.
   //const end = "/*export*/ function f() { /* */";
   const end = "/*export*/ function f() { /* * ";
-  expect(insert(doc, doc.length, "/")).toEqual(end);
+  expect(insert(doc, doc.length, "/")).toEqual([ end, end.length ]);
 });
