@@ -1,5 +1,7 @@
 # @valtown/codemirror-continue
 
+<a href="https://www.npmjs.com/package/@valtown/codemirror-continue" rel="nofollow"><img src="https://img.shields.io/npm/v/@valtown/codemirror-continue.svg" alt="npm"></a>
+
 This **continues block comments when you
 hit Enter** in [CodeMirror](https://codemirror.net/).
 
