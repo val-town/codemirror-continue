@@ -52,7 +52,8 @@
   "peerDependencies": {
     "@codemirror/language": "^6",
     "@codemirror/state": "^6",
-    "@codemirror/view": "^6"
+    "@codemirror/view": "^6",
+    "@lezer/common": "^1"
   },
   "engines": {
     "node": "*"
