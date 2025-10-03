@@ -1,9 +1,7 @@
-import { javascriptLanguage } from "@codemirror/lang-javascript";
 import { syntaxTree } from "@codemirror/language";
 import {
   EditorSelection,
   type EditorState,
-  type Line,
   type SelectionRange,
   type StateCommand,
   type Text,
@@ -13,38 +11,38 @@ import type { SyntaxNode } from "@lezer/common";
 
 // commentTokens: {line: "//", block: {open: "/*", close: "*/"}},
 interface Block {
-  open: string | null,
-  close: string | null
+  open: string | null;
+  close: string | null;
 }
 interface CommentTokens {
-  line: string | null,
-  block: Block | null
+  line: string | null;
+  block: Block | null;
 }
 
 const atCommentToken = (doc: Text, pos: number, node: SyntaxNode) => {
   return (
     // Either */<HERE> or *<HERE>/.
-    ((pos === node.to) || (pos === (node.to - 1)))
+    (pos === node.to || pos === node.to - 1) &&
     // And there's enough space in the comment for it to be ending.
-    && ((node.to - node.from) >= "/**/".length)
+    node.to - node.from >= "/**/".length &&
     // And the comment actually ends.
-    && (doc.sliceString(node.to - 2, node.to) === "*/")
+    doc.sliceString(node.to - 2, node.to) === "*/"
   );
-}
+};
 
 const able = (state: EditorState, range: SelectionRange) => {
   if (range.empty) {
-    const data = state.languageDataAt<CommentTokens>("commentTokens", range.from);
+    const data = state.languageDataAt<CommentTokens>(
+      "commentTokens",
+      range.from,
+    );
     for (let i = 0; i < data.length; i++) {
       const block = data[i]?.block;
-      if (block
-          && (block.open === "/*")
-          && (block.close === "*/"))
-        return true;
+      if (block && block.open === "/*" && block.close === "*/") return true;
     }
   }
   return false;
-}
+};
 
 /**
  * This is modeled after the CodeMirror Markdown mode's
@@ -61,8 +59,7 @@ export const insertNewlineContinueComment: StateCommand = ({
   const { doc } = state;
   let dont: null | { range: SelectionRange } = null;
   const changes = state.changeByRange((range) => {
-    if (!able(state, range))
-      return (dont = { range });
+    if (!able(state, range)) return (dont = { range });
 
     const pos = range.from;
     const line = doc.lineAt(pos);
@@ -84,7 +81,7 @@ export const insertNewlineContinueComment: StateCommand = ({
       offset++; // Line up with the *.
 
       const restOfLine = line.text.slice(pos - line.from).trim();
-      let indentStr = " ".repeat(offset);
+      const indentStr = " ".repeat(offset);
       const insert = `${state.lineBreak}${indentStr}* ${restOfLine}`;
 
       return {
@@ -110,8 +107,7 @@ export const maybeCloseBlockComment: StateCommand = ({ state, dispatch }) => {
   const { doc } = state;
   let dont: null | { range: SelectionRange } = null;
   const changes = state.changeByRange((range) => {
-    if (!able(state, range))
-      return (dont = { range });
+    if (!able(state, range)) return (dont = { range });
     const pos = range.from;
     const line = doc.lineAt(pos);
 
