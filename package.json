@@ -35,7 +35,8 @@
     "codemirror": "^6.0.1",
     "typescript": "^5.8.3",
     "vite": "^7.0.0",
-    "vitest": "^4.0.0"
+    "vitest": "^4.0.0",
+    "@changesets/cli": "^2.31.0"
   },
   "exports": {
     "./package.json": "./package.json",
@@ -57,8 +58,5 @@
   },
   "engines": {
     "node": "*"
-  },
-  "dependencies": {
-    "@changesets/cli": "^2.31.0"
   }
 }
