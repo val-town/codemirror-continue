@@ -19,6 +19,13 @@ interface CommentTokens {
   block: Block | null;
 }
 
+const isJsDocBlock = (doc: Text, node: SyntaxNode) => {
+  return (
+    node.name === "BlockComment" &&
+    doc.sliceString(node.from, node.from + 3) === "/**"
+  );
+};
+
 const atCommentToken = (doc: Text, pos: number, node: SyntaxNode) => {
   return (
     // Either */<HERE> or *<HERE>/.
@@ -66,7 +73,7 @@ export const insertNewlineContinueComment: StateCommand = ({
 
     const node = tree.resolveInner(pos, -1);
 
-    if (node.name === "BlockComment") {
+    if (isJsDocBlock(doc, node)) {
       // If the cursor is at the */ token, do not continue.
       if (atCommentToken(doc, pos, node)) {
         return (dont = { range });
@@ -122,7 +129,7 @@ export const maybeCloseBlockComment: StateCommand = ({ state, dispatch }) => {
 
     const node = tree.resolveInner(pos, -1);
 
-    if (node.name === "BlockComment") {
+    if (isJsDocBlock(doc, node)) {
       // If this line is the comment ending, do not
       // continue.
       if (line.text.match(/\*\//)) {

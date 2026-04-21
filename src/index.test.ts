@@ -38,8 +38,7 @@ function insert(text: string, pos: number, char = " ") {
 
 test("/*", () => {
   const doc = "/* abc";
-  const end = "/* abc\n * ";
-  expect(insert(doc, doc.length)).toEqual([end, end.length]);
+  expect(insert(doc, doc.length)).toEqual([doc, doc.length]);
 });
 
 test("/**", () => {
@@ -68,10 +67,10 @@ test("midway with trim", () => {
 
 test("midway on second line", () => {
   const doc = `
-/* @brief Add one.
+/** @brief Add one.
  * This is a longish sentence that will be split in two.`;
   const end = `
-/* @brief Add one.
+/** @brief Add one.
  * This is a longish sentence that will be split
  * in two.`;
   expect(insert(doc, doc.length - " in two.".length)).toEqual([
@@ -141,9 +140,9 @@ function increment(num: number) {
 
 test("earlier close missing", () => {
   const doc = `
-let a /* forgot to close this...
+let a /** forgot to close this...
 
-/* ...so this will align with the one above`;
+/** ...so this will align with the one above`;
 
   const end = `${doc}
        * `;
@@ -181,7 +180,7 @@ test("at end slash", () => {
 
 test("previous comment ends on line", () => {
   const doc = `
-/*export*/ function f() { /* description `;
+/*export*/ function f() { /** description `;
   const end = `${doc}
                            * `;
   expect(insert(doc, doc.length)).toEqual([end, end.length]);
