@@ -57,5 +57,8 @@
   },
   "engines": {
     "node": "*"
+  },
+  "dependencies": {
+    "@changesets/cli": "^2.31.0"
   }
 }
