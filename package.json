@@ -58,5 +58,8 @@
   },
   "engines": {
     "node": "*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
