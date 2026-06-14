@@ -34,7 +34,7 @@
     "@codemirror/lang-javascript": "^6.2.3",
     "codemirror": "^6.0.1",
     "typescript": "^6.0.0",
-    "vite": "^7.0.0",
+    "vite": "^8.0.16",
     "vitest": "^4.0.0",
     "@changesets/cli": "^2.31.0"
   },
