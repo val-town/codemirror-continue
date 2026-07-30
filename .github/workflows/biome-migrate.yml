@@ -1,0 +1,47 @@
+name: Biome migrate
+
+# Renovate's own postUpgradeTasks can't run here: it is a self-hosted-only
+# feature, and this repo uses the hosted Renovate app. So the migration runs
+# on the Renovate branch instead. `biome migrate` is a no-op when the config
+# is already current, so this is safe to run on every Renovate branch.
+
+on:
+  push:
+    branches:
+      - "renovate/**"
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    name: Migrate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Run biome migrate
+        run: npx biome migrate --write
+
+      - name: Commit changes
+        run: |
+          if [ -z "$(git status --porcelain biome.json)" ]; then
+            echo "biome.json unchanged"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: run biome migrate" biome.json
+          git push origin HEAD:${{ github.ref_name }}
