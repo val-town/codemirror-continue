@@ -2,5 +2,22 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "@biomejs/biome"
+      ],
+      "postUpgradeTasks": {
+        "commands": [
+          "npx --yes @biomejs/biome@{{{newVersion}}} migrate --write"
+        ],
+        "fileFilters": [
+          "biome.json",
+          "biome.jsonc"
+        ],
+        "executionMode": "update"
+      }
+    }
   ]
 }
