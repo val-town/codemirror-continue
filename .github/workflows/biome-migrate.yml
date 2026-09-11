@@ -13,6 +13,7 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
+  actions: write
   contents: write
 
 jobs:
@@ -36,6 +37,8 @@ jobs:
         run: npx biome migrate --write
 
       - name: Commit changes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -z "$(git status --porcelain biome.json)" ]; then
             echo "biome.json unchanged"
@@ -45,3 +48,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore: run biome migrate" biome.json
           git push origin HEAD:${{ github.ref_name }}
+          # Pushes made with GITHUB_TOKEN don't fire push events, so run CI by hand.
+          gh workflow run test.yml --ref "${{ github.ref_name }}"
